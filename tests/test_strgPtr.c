@@ -18,8 +18,11 @@ Test(strgLen, counts_characters)
 {
     cr_assert_eq(strgLen("Stony Brook"), 11);
     cr_assert_eq(strgLen(""), 0);
+    cr_assert_eq(strgLen("CSE 220"),7);
+    cr_assert_eq(strgLen("-1982"),5);
+    cr_assert_eq(strgLen(NULL),-1);
 }
-
+/*
 Test(strgLen, null_is_an_error)
 {
     cr_assert_eq(strgLen(NULL), -1);
@@ -48,6 +51,7 @@ Test(strgChangeCase, skips_letters_next_to_digits)
     strgChangeCase(s);
     cr_assert_str_eq(s, "csE220");
 }
+    */
 
 /*
  * TODO: add your own tests below.

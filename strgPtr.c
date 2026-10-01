@@ -16,13 +16,26 @@
 int strgLen(const char *s)
 {
     /* TODO: return the number of characters before the terminating '\0'. */
+
     /* NULL is an error here and returns -1. */
-    (void)s;
-    return 0;
+    if (!s){return -1;}
+    
+
+    /*
+    we can check if iterating through the string is null or not, so if its not then we increment because that means theres a value there
+    otherwise the loop ends, and then we can just return the count.
+    */
+    int count = 0;
+    while(*(s + count)){
+        count++;
+    }
+
+    return count;
 }
 
-void strgCopy(const char *source, char *destination, size_t size)
-{
+
+//void strgCopy(const char *source, char *destination, size_t size)
+//{
     /*
      * TODO: copy source into destination, including the '\0'.
      *
@@ -30,13 +43,31 @@ void strgCopy(const char *source, char *destination, size_t size)
      * characters plus the terminator fit. Copy what fits and terminate.
      * Do nothing at all when a pointer is NULL or size is 0.
      */
+     /*
     (void)source;
     (void)destination;
     (void)size;
-}
 
-void strgChangeCase(char *s)
-{
+    if (!source || !destination || size == 0){
+        return;
+    }
+        */
+    /*
+
+    If source does not fit, copy the first (size-1) with size 5, "Computer Science" becomes "Comp".
+    1 characters and then write '\0'
+    For example: 
+    
+    If size is 1, store only '\0'
+
+    */
+
+
+
+//}
+
+//void strgChangeCase(char *s)
+//{
     /*
      * TODO: flip the case of each letter, in place.
      *
@@ -45,11 +76,11 @@ void strgChangeCase(char *s)
      * last character has no right neighbor, so only check the side that
      * exists. Characters that are not letters never change.
      */
-    (void)s;
-}
+    //(void)s;
+//}
 
-int strgDiff(const char *s1, const char *s2)
-{
+//int strgDiff(const char *s1, const char *s2)
+//{
     /*
      * TODO: return the index of the first position where the two strings
      * differ, or -1 when they are identical.
@@ -57,6 +88,7 @@ int strgDiff(const char *s1, const char *s2)
      * When one string ends first, that position is the index of its '\0',
      * so "abc" and "abcd" differ at index 3.
      */
+     /*
     (void)s1;
     (void)s2;
     return 0;
@@ -64,6 +96,7 @@ int strgDiff(const char *s1, const char *s2)
 
 void strgInterleave(const char *s1, const char *s2, char *d, size_t size)
 {
+*/
     /*
      * TODO: write characters into d, alternating s1, s2, s1, s2, and so on,
      * starting with s1. When one string runs out, copy the rest of the other.
@@ -73,6 +106,7 @@ void strgInterleave(const char *s1, const char *s2, char *d, size_t size)
      * two writes of a pair: the character from s1 may fit while the one from
      * s2 does not.
      */
+    /*
     (void)s1;
     (void)s2;
     (void)d;
@@ -81,6 +115,7 @@ void strgInterleave(const char *s1, const char *s2, char *d, size_t size)
 
 void strgReverseLetters(char *s)
 {
+*/
     /*
      * TODO: reverse the order of the letters in s, in place.
      *
@@ -88,5 +123,5 @@ void strgReverseLetters(char *s)
      * "ab-cd" becomes "dc-ba". Walking one index in from each end and
      * swapping only when both sides are letters is one way to do this.
      */
-    (void)s;
-}
+   // (void)s;
+//}
