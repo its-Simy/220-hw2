@@ -12,6 +12,7 @@
  * the starter kit compiles with -Werror before you have written any code.
  */
 #include "strgPtr.h"
+#include <stdio.h>
 
 int strgLen(const char *s)
 {
@@ -34,8 +35,8 @@ int strgLen(const char *s)
 }
 
 
-//void strgCopy(const char *source, char *destination, size_t size)
-//{
+void strgCopy(const char *source, char *destination, size_t size)
+{
     /*
      * TODO: copy source into destination, including the '\0'.
      *
@@ -43,28 +44,25 @@ int strgLen(const char *s)
      * characters plus the terminator fit. Copy what fits and terminate.
      * Do nothing at all when a pointer is NULL or size is 0.
      */
-     /*
-    (void)source;
-    (void)destination;
-    (void)size;
 
-    if (!source || !destination || size == 0){
+    //if any of the possible edge cases that do nothing happen, then we just do nothing
+    if (!source || !destination){
+        return;//return would just end the functinoa and not do anything which is what we want
+    }
+    if (size == 0){
         return;
     }
-        */
-    /*
-
-    If source does not fit, copy the first (size-1) with size 5, "Computer Science" becomes "Comp".
-    1 characters and then write '\0'
-    For example: 
-    
-    If size is 1, store only '\0'
-
-    */
-
-
-
-//}
+    if (size == 1){
+        destination[0] = '\0';
+    }
+    int point = 0;
+    while(point < (int)size-1){
+        if (point > strgLen(source)){break;}
+        destination[point] = source[point];
+        point++;
+    }
+    destination[point] = '\0';
+}
 
 //void strgChangeCase(char *s)
 //{

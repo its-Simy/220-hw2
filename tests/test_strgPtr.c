@@ -14,19 +14,21 @@
 #include "strgPtr.h"
 
 /* Test(suite_name, test_name) is how Criterion declares one test. */
+
 Test(strgLen, counts_characters)
 {
     cr_assert_eq(strgLen("Stony Brook"), 11);
     cr_assert_eq(strgLen(""), 0);
     cr_assert_eq(strgLen("CSE 220"),7);
     cr_assert_eq(strgLen("-1982"),5);
-    cr_assert_eq(strgLen(NULL),-1);
 }
-/*
+
 Test(strgLen, null_is_an_error)
 {
     cr_assert_eq(strgLen(NULL), -1);
 }
+
+
 
 Test(strgCopy, copies_a_short_string)
 {
@@ -43,6 +45,35 @@ Test(strgCopy, stops_when_the_buffer_is_full)
     strgCopy("Computer Science", destination, sizeof destination);
     cr_assert_str_eq(destination, "Comp");
 }
+   
+
+Test(strgCopy, size_greater_than_string)
+{
+    char destination[8];
+
+    strgCopy("CSE-220", destination, sizeof destination);
+    cr_assert_str_eq(destination, "CSE-220");
+
+}
+
+Test(strgCopy, string_empty_and_size_greater_than_string)
+{
+    char destination[5];
+
+    strgCopy("", destination, sizeof destination);
+    cr_assert_str_eq(destination, "");
+}
+
+Test(strgCopy, size_one_edgecase)
+{
+    char destination[1];
+
+    strgCopy("abc", destination, sizeof destination);
+    
+    cr_assert_str_eq(destination, "");
+}
+    
+/*
 
 Test(strgChangeCase, skips_letters_next_to_digits)
 {
