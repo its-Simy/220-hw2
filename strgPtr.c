@@ -101,8 +101,8 @@ void strgChangeCase(char *s)
     
 }
 
-//int strgDiff(const char *s1, const char *s2)
-//{
+int strgDiff(const char *s1, const char *s2)
+{
     /*
      * TODO: return the index of the first position where the two strings
      * differ, or -1 when they are identical.
@@ -110,12 +110,22 @@ void strgChangeCase(char *s)
      * When one string ends first, that position is the index of its '\0',
      * so "abc" and "abcd" differ at index 3.
      */
-     /*
-    (void)s1;
-    (void)s2;
-    return 0;
-}
+     
+    int pointer = 0;
 
+    if ((!s1[pointer] && s2[pointer]) || (!s2[pointer] && s1[pointer])){
+            return pointer;
+    }    
+
+    while (s1[pointer] && s2[pointer]){
+        if (s1[pointer] != s2[pointer]){
+            return pointer;
+        }
+    }
+    
+    return -1;
+}
+/*
 void strgInterleave(const char *s1, const char *s2, char *d, size_t size)
 {
 */
