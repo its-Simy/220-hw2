@@ -72,8 +72,6 @@ Test(strgCopy, size_one_edgecase)
     
     cr_assert_str_eq(destination, "");
 }
-    
-/*
 
 Test(strgChangeCase, skips_letters_next_to_digits)
 {
@@ -82,7 +80,7 @@ Test(strgChangeCase, skips_letters_next_to_digits)
     strgChangeCase(s);
     cr_assert_str_eq(s, "csE220");
 }
-    */
+    
 
 /*
  * TODO: add your own tests below.

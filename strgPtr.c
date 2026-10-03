@@ -64,8 +64,8 @@ void strgCopy(const char *source, char *destination, size_t size)
     destination[point] = '\0';
 }
 
-//void strgChangeCase(char *s)
-//{
+void strgChangeCase(char *s)
+{
     /*
      * TODO: flip the case of each letter, in place.
      *
@@ -74,8 +74,32 @@ void strgCopy(const char *source, char *destination, size_t size)
      * last character has no right neighbor, so only check the side that
      * exists. Characters that are not letters never change.
      */
-    //(void)s;
-//}
+    
+    int point = 0;
+    while (s[point]){
+        int isPrevDigit = s[point - 1] && (s[point-1] >= 48 && s[point-1] <= 57) ? 1 : 0;
+        int isNextDigit = s[point + 1] && (s[point+1] >= 48 && s[point+1] <= 57) ? 1 : 0;
+
+        //this handles the previous or after letter of the numbers, they must be skipped
+        if(isPrevDigit || isNextDigit){
+            point++;
+            continue;
+        }
+
+        //we are making these flips via ascii values so anything that isn't a letter won't be converted because it has to be between the letter ranged to be converted
+
+        //if it is a Uppercase letter we must convert it into a lowercase letter
+        if ((int)s[point] >= 65 && (int)s[point] <= 90){
+            s[point] = s[point]+(char)32;
+        }
+        //if it is a lowercase letter we have to turn it into a uppercase letter
+        else if ((int)s[point] >= 97 && (int)s[point] <= 122){
+            s[point] = s[point]-(char)32;
+        }
+        point ++;
+    }
+    
+}
 
 //int strgDiff(const char *s1, const char *s2)
 //{
