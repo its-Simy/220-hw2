@@ -113,22 +113,24 @@ int strgDiff(const char *s1, const char *s2)
      
     int pointer = 0;
 
-    if ((!s1[pointer] && s2[pointer]) || (!s2[pointer] && s1[pointer])){
-            return pointer;
+    if (!s1  || !s2 ){
+        return -2;
     }    
 
     while (s1[pointer] && s2[pointer]){
         if (s1[pointer] != s2[pointer]){
             return pointer;
         }
+        pointer++;
     }
+
     
-    return -1;
+    return (!s1[pointer] && !s2[pointer]) ? -1 : pointer;
 }
-/*
+
 void strgInterleave(const char *s1, const char *s2, char *d, size_t size)
 {
-*/
+
     /*
      * TODO: write characters into d, alternating s1, s2, s1, s2, and so on,
      * starting with s1. When one string runs out, copy the rest of the other.
@@ -138,16 +140,42 @@ void strgInterleave(const char *s1, const char *s2, char *d, size_t size)
      * two writes of a pair: the character from s1 may fit while the one from
      * s2 does not.
      */
-    /*
-    (void)s1;
-    (void)s2;
-    (void)d;
-    (void)size;
+    
+    
+     /*
+     so since we stop at size - 1 that means we would have to create some sort of check
+
+     this breaks down into if both strings are remaining and we haven't hit size-1
+
+     if s1 and !s2 and !size-1
+
+     if s2 and !s1 and !size-1
+
+     then thast it.
+     */
+
+     int point = 0;
+     int tracker = 0;
+
+    while((s1[point] || s2[point]) && tracker < ((int)size-1)){
+        if (s1[point]){
+            d[tracker] = s1[point];
+            tracker++;
+        }
+        
+        if(s2[point] && tracker < ((int)size-1)){
+            d[tracker] = s2[point];
+            tracker++;
+        }
+
+        point++;
+    }
+    d[tracker] = '\0';
 }
 
 void strgReverseLetters(char *s)
 {
-*/
+
     /*
      * TODO: reverse the order of the letters in s, in place.
      *
@@ -155,5 +183,24 @@ void strgReverseLetters(char *s)
      * "ab-cd" becomes "dc-ba". Walking one index in from each end and
      * swapping only when both sides are letters is one way to do this.
      */
-   // (void)s;
-//}
+    if (!s){return;}
+
+    int left = 0;
+    //this helps us set a right pointer to do a 2 pointer method. 
+    int right = 0;
+    while (s[right+1]){
+        right++;
+    }
+
+    while (left < right){
+        if((((int)s[left] >= 65 && (int)s[left] <= 90) || ((int)s[left] >= 97 && (int)s[left] <= 122)) &&
+        (((int)s[right] >= 65 && (int)s[right] <= 90) || ((int)s[right] >= 97 && (int)s[right] <= 122))){
+            char temp = s[right];
+            s[right] = s[left];
+            s[left] = temp;
+        }
+        left++;
+        right--;
+    }
+
+}
