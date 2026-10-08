@@ -51,7 +51,120 @@ Test(decryptCaesar, reports_a_missing_marker)
 
     cr_assert_eq(decryptCaesar("ceg", plaintext, sizeof plaintext, 2), -1);
 }
-    */
+    
+
+    Test(encryptCaesar, basic_lowercase)
+{
+    char ciphertext[20];
+
+    int result = encryptCaesar("abc", ciphertext, 20, 2);
+
+    cr_assert_eq(result, 3);
+    cr_assert_str_eq(ciphertext, "ceg__EOM__");
+}
+
+
+Test(encryptCaesar, mixed_case)
+{
+    char ciphertext[20];
+
+    int result = encryptCaesar("Ayb", ciphertext, 20, 3);
+
+    cr_assert_eq(result, 3);
+    cr_assert_str_eq(ciphertext, "Dcg__EOM__");
+}
+
+Test(encryptCaesar, letters_and_numbers)
+{
+    char ciphertext[20];
+
+    int result = encryptCaesar("Cse220", ciphertext, 20, 1);
+
+    cr_assert_eq(result, 6);
+    cr_assert_str_eq(ciphertext, "Duh911__EOM__");
+}
+
+Test(encryptCaesar, key_zero)
+{
+    char ciphertext[20];
+
+    int result = encryptCaesar("CS", ciphertext, 20, 0);
+
+    cr_assert_eq(result, 2);
+    cr_assert_str_eq(ciphertext, "CT__EOM__");
+}
+
+Test(encryptCaesar, negative_key)
+{
+    char ciphertext[20];
+
+    int result = encryptCaesar("abc", ciphertext, 20, -2);
+
+    cr_assert_eq(result, 3);
+    cr_assert_str_eq(ciphertext, "yac__EOM__");
+}
+*/
+
+Test(encryptCaesar, key_over_26)
+{
+    char ciphertext[20];
+
+    int result = encryptCaesar("Cse220", ciphertext, 20, 27);
+
+    cr_assert_eq(result, 6);
+    cr_assert_str_eq(ciphertext, "Duh577__EOM__");
+}
+/*
+Test(encryptCaesar, empty_plaintext)
+{
+    char ciphertext[20];
+
+    int result = encryptCaesar("", ciphertext, 20, 5);
+
+    cr_assert_eq(result, 0);
+    cr_assert_str_eq(ciphertext, "__EOM__");
+}
+
+Test(encryptCaesar, full_message)
+{
+    char ciphertext[30];
+
+    int result = encryptCaesar("System Fundamentals", ciphertext, 30, 1);
+
+    cr_assert_eq(result, 19);
+    cr_assert_str_eq(ciphertext, "Tavxjs Ndxomzscjrdl__EOM__");
+}
+
+Test(encryptCaesar, truncated_message)
+{
+    char ciphertext[12];
+
+    int result = encryptCaesar("System Fundamentals", ciphertext, 12, 1);
+
+    cr_assert_eq(result, 4);
+    cr_assert_str_eq(ciphertext, "Tavx__EOM__");
+}
+
+Test(encryptCaesar, size_too_small)
+{
+    char ciphertext[20] = "unchanged";
+
+    int result = encryptCaesar("abc", ciphertext, 7, 2);
+
+    cr_assert_eq(result, -1);
+    cr_assert_str_eq(ciphertext, "unchanged");
+}
+
+Test(encryptCaesar, null_plaintext)
+{
+    char ciphertext[20] = "unchanged";
+
+    int result = encryptCaesar(NULL, ciphertext, 20, 1);
+
+    cr_assert_eq(result, -2);
+    cr_assert_str_eq(ciphertext, "unchanged");
+}
+*/
 
 /*
  * TODO: add your own tests below.

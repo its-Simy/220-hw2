@@ -12,7 +12,6 @@
  * the starter kit compiles with -Werror before you have written any code.
  */
 #include "strgPtr.h"
-#include <stdio.h>
 
 int strgLen(const char *s)
 {

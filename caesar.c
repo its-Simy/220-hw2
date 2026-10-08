@@ -10,6 +10,7 @@
  */
 #include "caesar.h"
 #include "strgPtr.h"
+#include <stdio.h>
 
 /* The end of message marker. It is never encrypted or decrypted. */
 #define EOM "__EOM__"
@@ -38,11 +39,86 @@ int encryptCaesar(const char *plaintext, char *ciphertext, size_t size, int key)
      * value you end up with is inside the range before you turn it back into
      * a character.
      */
-    (void)plaintext;
-    (void)ciphertext;
-    (void)size;
-    (void)key;
-    return 0;
+
+ 
+
+    if (!plaintext){return -2;}
+    if ((int)size <= 8){return -1;}
+    
+    int count = 0;
+    while (plaintext[count+1]){
+        count++;
+    }
+    int payload_size = (int)size;
+    if (count > (int)size){
+        payload_size = size-8;
+    }
+
+    int index = 0;
+
+    while (index < payload_size && plaintext[index]){
+        //if its a capital letter
+        if ((int)plaintext[index] >= 65 && (int)plaintext[index] <= 90){
+            char letter = (char)((int)plaintext[index] + (index + key));
+            if((int)letter > 90){
+                char difference = letter % (char)91;
+                ciphertext[index] = ('A' + difference);
+            }
+            else{
+                ciphertext[index] = letter;
+            }
+        }
+
+        //if its a lowercase letter
+
+        else if ((int)plaintext[index] >= 97 && (int)plaintext[index] <= 122){
+            char letter = (char)((int)plaintext[index] + (index + key));
+            if((int)letter > 122){
+                char difference = letter % (char)123;
+                ciphertext[index] = ('a' + difference);
+            }
+            else if((int)letter < 97){
+                char difference = (char)97 - letter;
+                ciphertext[index] = ('z' - (difference-1));
+            }
+            else{
+                ciphertext[index] = letter;
+            }
+        }
+        //if its a number
+        else if ((int)plaintext[index] >= 48 && (int)plaintext[index] <= 57){
+            printf("\nWent INSIDE");
+            char num = (char)( (2 * index) + (int)plaintext[index] + key);
+            if ((int)num > 57){
+                
+                char difference = num % (char)58;
+                printf("\nCharacter: %c\n", plaintext[index]);
+                printf("Difference Character %d\n",(int)difference);
+                ciphertext[index] = ('0' + difference);
+            }
+            else{
+                ciphertext[index] = num;
+            }
+            
+        }
+        // anything else
+        else{
+            ciphertext[count] = plaintext[count];
+        }
+        index++;
+    }
+    int temp = index;
+    if (index < (int)size){
+        ciphertext[temp++] = '_';
+        ciphertext[temp++] = '_';
+        ciphertext[temp++] = 'E';
+        ciphertext[temp++] = 'O';
+        ciphertext[temp++] = 'M';
+        ciphertext[temp++] = '_';
+        ciphertext[temp++] = '_';
+    }
+    ciphertext[temp] = '\0';
+    return index;
 }
 
 int decryptCaesar(const char *ciphertext, char *plaintext, size_t size, int key)
