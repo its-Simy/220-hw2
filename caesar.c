@@ -40,70 +40,69 @@ int encryptCaesar(const char *plaintext, char *ciphertext, size_t size, int key)
      * a character.
      */
 
- 
-
-    if (!plaintext){return -2;}
-    if ((int)size <= 8){return -1;}
+    if (!plaintext || !ciphertext){return -2;}
+    if ((int)size < 8){return -1;}
     
-    int count = 0;
-    while (plaintext[count+1]){
-        count++;
-    }
-    int payload_size = (int)size;
-    if (count > (int)size){
-        payload_size = size-8;
-    }
+    int count = strgLen(plaintext);
+    int payload = (int)size-8;
+    if(count < payload){payload=count;}
 
     int index = 0;
 
-    while (index < payload_size && plaintext[index]){
+    while (index < payload && plaintext[index]){
         //if its a capital letter
         if ((int)plaintext[index] >= 65 && (int)plaintext[index] <= 90){
-            char letter = (char)((int)plaintext[index] + (index + key));
-            if((int)letter > 90){
-                char difference = letter % (char)91;
-                ciphertext[index] = ('A' + difference);
+            int shift = (index + key) % 26;
+            int letter = (int)plaintext[index] + shift;
+            if(letter > 90){
+                int difference = letter % 91;
+                ciphertext[index] = (char)('A' + difference);
+            }
+            else if(letter < 65){
+                int difference = 65 - letter;
+                ciphertext[index] = (char)('Z' - (difference-1));
             }
             else{
-                ciphertext[index] = letter;
+                ciphertext[index] = (char)letter;
             }
         }
 
         //if its a lowercase letter
 
         else if ((int)plaintext[index] >= 97 && (int)plaintext[index] <= 122){
-            char letter = (char)((int)plaintext[index] + (index + key));
-            if((int)letter > 122){
-                char difference = letter % (char)123;
-                ciphertext[index] = ('a' + difference);
+            int shift = (index + key)%26;
+            int letter = (int)plaintext[index] + shift;
+            if(letter > 122){
+                int difference = letter % 123;
+                ciphertext[index] = (char)('a' + difference);
             }
-            else if((int)letter < 97){
-                char difference = (char)97 - letter;
-                ciphertext[index] = ('z' - (difference-1));
+            else if(letter < 97){
+                int difference = 97 - letter;
+                ciphertext[index] = (char)('z' - (difference-1));
             }
             else{
-                ciphertext[index] = letter;
+                ciphertext[index] = (char)letter;
             }
         }
         //if its a number
         else if ((int)plaintext[index] >= 48 && (int)plaintext[index] <= 57){
-            printf("\nWent INSIDE");
-            char num = (char)( (2 * index) + (int)plaintext[index] + key);
-            if ((int)num > 57){
-                
-                char difference = num % (char)58;
-                printf("\nCharacter: %c\n", plaintext[index]);
-                printf("Difference Character %d\n",(int)difference);
-                ciphertext[index] = ('0' + difference);
+            int shift = ((2 * index) + key)%10;
+            int num = (int)plaintext[index] + shift;
+            if (num > 57){
+                int difference = (int)num % 58;
+                ciphertext[index] = (char)('0' + difference);
+            }
+            else if((int)num < 48){
+                int difference = 48 - num;
+                ciphertext[index] = (char)('9' - (difference-1));
             }
             else{
-                ciphertext[index] = num;
+                ciphertext[index] = (char)num;
             }
-            
         }
         // anything else
         else{
-            ciphertext[count] = plaintext[count];
+            ciphertext[index] = plaintext[index];
         }
         index++;
     }
@@ -140,9 +139,86 @@ int decryptCaesar(const char *ciphertext, char *plaintext, size_t size, int key)
      * you actually wrote. Decrypting means shifting backward by the same
      * amounts that encryption shifted forward, using the same indexes.
      */
-    (void)ciphertext;
-    (void)plaintext;
-    (void)size;
-    (void)key;
-    return 0;
+    if (!ciphertext || !plaintext){return -2;}
+    if (size == 0 || size == 1){return 0;}
+
+    char eom[] = "__EOM__";
+    int point = -1;
+    for (int i = 0; ciphertext[i] != '\0'; i++) {
+        int j = 0;
+        while (j < 7 && ciphertext[i + j] == eom[j]) {
+            j++;
+        }
+        if (j == 7) {
+            point = i;
+            break;
+        }
+    }
+
+    if (point == -1){return -1;}
+
+    point = point > (int)size-1 ? (int)size-1 : point;
+    int index = 0;
+
+    while (index < point){
+
+        //if its a capital letter
+        if ((int)ciphertext[index] >= 65 && (int)ciphertext[index] <= 90){
+            int shift = (index + key) % 26;
+            int letter = (int)ciphertext[index] - shift;
+            if(letter > 90){
+                int difference = letter % 91;
+                plaintext[index] = ('A' + difference);
+            }
+            else if(letter < 65){
+                int difference = 65- letter;
+                plaintext[index] = ('Z' - (difference-1));
+            }
+            else{
+                plaintext[index] = (char)letter;
+            }
+        }
+
+        //if its a lowercase letter
+
+        else if ((int)ciphertext[index] >= 97 && (int)ciphertext[index] <= 122){
+            int shift = (index + key) % 26;
+            int letter = (int)ciphertext[index] - shift;
+            if(letter > 122){
+                int difference = letter % 123;
+                plaintext[index] = (char)('a' + difference);
+            }
+            else if(letter < 97){
+                int difference = 97 - letter;
+                plaintext[index] = (char)('z' - (difference-1));
+            }
+            else{
+                plaintext[index] = (char)letter;
+            }
+        }
+        //if its a number
+        else if ((int)ciphertext[index] >= 48 && (int)ciphertext[index] <= 57){
+            int shift = ((2 * index) + key)%10;
+            int num = (int)ciphertext[index] - shift;
+            if (num > 57){
+                int difference = (int)num % 58;
+                plaintext[index] = (char)('0' + difference);
+            }
+            else if(num < 48){
+                int difference = 48 - num;
+                plaintext[index] = (char)('9' - difference+1);
+            }
+            else{
+                plaintext[index] = (char)num;
+            }
+        }
+        // anything else
+        else{
+            plaintext[index] = ciphertext[index];
+        }
+        index++;
+    }
+
+    plaintext[index] = '\0';
+    return index;
 }

@@ -14,251 +14,290 @@
 #include "strgPtr.h"
 
 /* Test(suite_name, test_name) is how Criterion declares one test. */
-
-Test(strgLen, counts_characters)
+//null string returns -1
+Test(strgLen, null_string)
 {
-    cr_assert_eq(strgLen("Stony Brook"), 11);
-    cr_assert_eq(strgLen(""), 0);
-    cr_assert_eq(strgLen("CSE 220"),7);
-    cr_assert_eq(strgLen("-1982"),5);
+    int result = strgLen(NULL);
+
+    cr_assert_eq(result, -1);
 }
 
-Test(strgLen, null_is_an_error)
+//empty string has length 0
+Test(strgLen, empty_string)
 {
-    cr_assert_eq(strgLen(NULL), -1);
+    int result = strgLen("");
+
+    cr_assert_eq(result, 0);
+}
+
+//spaces count as characters
+Test(strgLen, only_spaces)
+{
+    int result = strgLen("   ");
+
+    cr_assert_eq(result, 3);
+}
+
+//symbols and digits count too
+Test(strgLen, symbols_and_digits)
+{
+    int result = strgLen("aindf1 o13!34");
+
+    cr_assert_eq(result, 13);
+}
+
+//stops at the first '\0'
+Test(strgLen, stops_at_first_null)
+{
+    int result = strgLen("abc\0def");
+
+    cr_assert_eq(result, 3);
 }
 
 
 
-Test(strgCopy, copies_a_short_string)
+//null source leaves destination alone
+Test(strgCopy, null_source)
 {
-    char destination[20];
+    char destination[10] = "unchanged";
 
-    strgCopy("Computer Science", destination, sizeof destination);
-    cr_assert_str_eq(destination, "Computer Science");
+    strgCopy(NULL, destination, sizeof destination);
+
+    cr_assert_str_eq(destination, "unchanged");
 }
 
-Test(strgCopy, stops_when_the_buffer_is_full)
+//size 0 does nothing
+Test(strgCopy, size_zero)
 {
-    char destination[5];
+    char destination[10] = "unchanged";
 
-    strgCopy("Computer Science", destination, sizeof destination);
-    cr_assert_str_eq(destination, "Comp");
-}
-   
+    strgCopy("hello", destination, 0);
 
-Test(strgCopy, size_greater_than_string)
-{
-    char destination[8];
-
-    strgCopy("CSE-220", destination, sizeof destination);
-    cr_assert_str_eq(destination, "CSE-220");
-
+    cr_assert_str_eq(destination, "unchanged");
 }
 
-Test(strgCopy, string_empty_and_size_greater_than_string)
+//empty source overwrites the old contents
+Test(strgCopy, empty_source)
 {
-    char destination[5];
+    char destination[10] = "unchanged";
 
     strgCopy("", destination, sizeof destination);
-    cr_assert_str_eq(destination, "");
-}
-
-Test(strgCopy, size_one_edgecase)
-{
-    char destination[1];
-
-    strgCopy("abc", destination, sizeof destination);
-    
-    cr_assert_str_eq(destination, "");
-}
-
-Test(strgChangeCase, skips_letters_next_to_digits)
-{
-    char s[] = "CSE220";
-
-    strgChangeCase(s);
-    cr_assert_str_eq(s, "csE220");
-}
-
-
-Test(strgDiff, identical_strings)
-{
-    cr_assert_eq(strgDiff("Hello", "Hello"), -1);
-}
-
-Test(strgDiff, first_difference_middle)
-{
-    cr_assert_eq(strgDiff("CSE-220", "CSE220"), 3);
-}
-
-Test(strgDiff, first_difference_at_start)
-{
-    cr_assert_eq(strgDiff("CSE220", "SE220"), 0);
-}
-
-Test(strgDiff, both_empty)
-{
-    cr_assert_eq(strgDiff("", ""), -1);
-}
-
-Test(strgDiff, second_string_longer)
-{
-    cr_assert_eq(strgDiff("abc", "abcd"), 3);
-}
-
-
-Test(strgDiff, second_string_null)
-{
-    cr_assert_eq(strgDiff("abc", NULL), -2);
-}
-
-
-
-Test(strgInterleave, equal_length_strings)
-{
-    char destination[20];
-
-    strgInterleave("abc", "123", destination, sizeof destination);
-
-    cr_assert_str_eq(destination, "a1b2c3");
-}
-
-Test(strgInterleave, first_string_longer)
-{
-    char destination[20];
-
-    strgInterleave("abcdef", "123", destination, sizeof destination);
-
-    cr_assert_str_eq(destination, "a1b2c3def");
-}
-
-Test(strgInterleave, second_string_longer)
-{
-    char destination[20];
-
-    strgInterleave("cse", "12345", destination, sizeof destination);
-
-    cr_assert_str_eq(destination, "c1s2e345");
-}
-
-Test(strgInterleave, first_string_numbers_second_letters)
-{
-    char destination[20];
-
-    strgInterleave("1234", "cs", destination, sizeof destination);
-
-    cr_assert_str_eq(destination, "1c2s34");
-}
-
-Test(strgInterleave, both_strings_empty)
-{
-    char destination[20];
-
-    strgInterleave("", "", destination, sizeof destination);
 
     cr_assert_str_eq(destination, "");
 }
 
-Test(strgInterleave, first_string_empty)
+//string and '\0' fill the buffer
+Test(strgCopy, exact_fit)
 {
-    char destination[20];
+    char destination[7];
 
-    strgInterleave("", "123", destination, sizeof destination);
+    strgCopy("Spooks", destination, sizeof destination);
 
-    cr_assert_str_eq(destination, "123");
+    cr_assert_str_eq(destination, "Spooks");
 }
 
-Test(strgInterleave, truncates_size_4)
-{
-    char destination[4];
-
-    strgInterleave("abc", "123", destination, sizeof destination);
-
-    cr_assert_str_eq(destination, "a1b");
-}
-
-Test(strgInterleave, truncates_size_5)
-{
-    char destination[5];
-
-    strgInterleave("abc", "123", destination, sizeof destination);
-
-    cr_assert_str_eq(destination, "a1b2");
-}
-
-Test(strgInterleave, truncates_first_string_longer)
+//one byte too small cuts off the last character
+Test(strgCopy, one_char_too_small)
 {
     char destination[6];
 
-    strgInterleave("abcdef", "12", destination, sizeof destination);
+    strgCopy("Dfghjk", destination, sizeof destination);
 
-    cr_assert_str_eq(destination, "a1b2c");
+    cr_assert_str_eq(destination, "Dfghj");
 }
 
 
-Test(strgReverseLetters, normal_word)
+
+//null string, passes if it doesn't crash
+Test(strgChangeCase, null_string)
 {
-    char s[] = "Hello";
+    strgChangeCase(NULL);
 
-    strgReverseLetters(s);
-
-    cr_assert_str_eq(s, "olleH");
+    cr_assert(1);
 }
 
-Test(strgReverseLetters, hyphen_stays_in_place)
+//single letter has no neighbors
+Test(strgChangeCase, single_letter)
 {
-    char s[] = "ab-cd";
+    char s[] = "q";
 
-    strgReverseLetters(s);
+    strgChangeCase(s);
 
-    cr_assert_str_eq(s, "dc-ba");
+    cr_assert_str_eq(s, "Q");
 }
 
-Test(strgReverseLetters, digit_stays_in_place)
+//digit two spots away doesn't count
+Test(strgChangeCase, only_immediate_neighbors)
 {
-    char s[] = "a1b2c";
+    char s[] = "a-1";
 
-    strgReverseLetters(s);
+    strgChangeCase(s);
 
-    cr_assert_str_eq(s, "c1b2a");
+    cr_assert_str_eq(s, "A-1");
 }
 
-Test(strgReverseLetters, letters_with_digit)
+//digits on both sides of every letter
+Test(strgChangeCase, digits_on_both_sides)
 {
-    char s[] = "C3PO";
+    char s[] = "1a2B3";
 
-    strgReverseLetters(s);
+    strgChangeCase(s);
 
-    cr_assert_str_eq(s, "O3PC");
+    cr_assert_str_eq(s, "1a2B3");
 }
 
-Test(strgReverseLetters, spaces_and_punctuation_stay_in_place)
+//first and last letters only have one neighbor
+Test(strgChangeCase, first_and_last_letters)
 {
-    char s[] = "Hi, Bob";
+    char s[] = "aB1cD";
 
-    strgReverseLetters(s);
+    strgChangeCase(s);
 
-    cr_assert_str_eq(s, "bo, BiH");
+    cr_assert_str_eq(s, "AB1cd");
 }
 
-Test(strgReverseLetters, empty_string)
+
+
+//null first string
+Test(strgDiff, null_first)
 {
-    char s[] = "";
+    int result = strgDiff(NULL, "abc");
 
-    strgReverseLetters(s);
-
-    cr_assert_str_eq(s, "");
+    cr_assert_eq(result, -2);
 }
 
+//empty string ends right away
+Test(strgDiff, empty_vs_nonempty)
+{
+    int result = strgDiff("", "a");
+
+    cr_assert_eq(result, 0);
+}
+
+//first string longer
+Test(strgDiff, first_longer)
+{
+    int result = strgDiff("abcd", "abc");
+
+    cr_assert_eq(result, 3);
+}
+
+//only the last character is different
+Test(strgDiff, last_char)
+{
+    int result = strgDiff("Rtyuio", "Rtyuip");
+    cr_assert_eq(result, 5);
+}
+
+//upper and lower case count as different
+Test(strgDiff, case_sensitive)
+{
+    int result = strgDiff("stony", "Stony");
+
+    cr_assert_eq(result, 0);
+}
+
+
+
+//null second string leaves destination alone
+Test(strgInterleave, null_second)
+{
+    char destination[10] = "unchanged";
+
+    strgInterleave("abc", NULL, destination, sizeof destination);
+
+    cr_assert_str_eq(destination, "unchanged");
+}
+
+//size 0 does nothing
+Test(strgInterleave, size_zero)
+{
+    char destination[10] = "unchanged";
+
+    strgInterleave("abc", "123", destination, 0);
+
+    cr_assert_str_eq(destination, "unchanged");
+}
+
+//size 1 only fits '\0'
+Test(strgInterleave, size_one)
+{
+    char destination[1];
+
+    strgInterleave("abc", "123", destination, sizeof destination);
+
+    cr_assert_str_eq(destination, "");
+}
+
+//second string empty copies the first
+Test(strgInterleave, second_empty)
+{
+    char destination[20];
+
+    strgInterleave("abc", "", destination, sizeof destination);
+
+    cr_assert_str_eq(destination, "abc");
+}
+
+//cut off in the leftover part
+Test(strgInterleave, truncates_leftover)
+{
+    char destination[6];
+
+    strgInterleave("ab", "12345", destination, sizeof destination);
+
+    cr_assert_str_eq(destination, "a1b23");
+}
+
+
+
+//null string, passes if it doesn't rash
 Test(strgReverseLetters, null_string)
 {
     strgReverseLetters(NULL);
 
-    // If we get here without crashing, the test passes.
     cr_assert(1);
 }
-  
+
+//no letters so nothing moves
+Test(strgReverseLetters, no_letters)
+{
+    char s[] = "123 !?";
+
+    strgReverseLetters(s);
+
+    cr_assert_str_eq(s, "123 !?");
+}
+
+//letters at both ends swap
+Test(strgReverseLetters, letters_at_ends)
+{
+    char s[] = "a123z";
+
+    strgReverseLetters(s);
+
+    cr_assert_str_eq(s, "z123a");
+}
+
+//case moves with the letter
+Test(strgReverseLetters, case_moves_with_letter)
+{
+    char s[] = "Wolfie 2026!";
+
+    strgReverseLetters(s);
+
+    cr_assert_str_eq(s, "eifloW 2026!");
+}
+
+//symbols between every letter
+Test(strgReverseLetters, symbols_between)
+{
+    char s[] = "a.b.c.d";
+
+    strgReverseLetters(s);
+
+    cr_assert_str_eq(s, "d.c.b.a");
+}
 
 /*
  * TODO: add your own tests below.

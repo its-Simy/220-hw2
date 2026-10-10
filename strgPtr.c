@@ -73,6 +73,7 @@ void strgChangeCase(char *s)
      * last character has no right neighbor, so only check the side that
      * exists. Characters that are not letters never change.
      */
+     if (!s){return;}
     
     int point = 0;
     while (s[point]){
@@ -153,6 +154,7 @@ void strgInterleave(const char *s1, const char *s2, char *d, size_t size)
      then thast it.
      */
 
+     if(!s1 || !s2 || !d || (int)size == 0){return;}
      int point = 0;
      int tracker = 0;
 
@@ -192,14 +194,24 @@ void strgReverseLetters(char *s)
     }
 
     while (left < right){
+        //skip anything on the left that isn't a letter
+        while (left < right && !(((int)s[left] >= 65 && (int)s[left] <= 90) || ((int)s[left] >= 97 && (int)s[left] <= 122))){
+            left++;
+        }
+        //skip anything on the right that isn't a letter
+        while (left < right && !(((int)s[right] >= 65 && (int)s[right] <= 90) || ((int)s[right] >= 97 && (int)s[right] <= 122))){
+            right--;
+        }
+        //otherwise just swap them
         if((((int)s[left] >= 65 && (int)s[left] <= 90) || ((int)s[left] >= 97 && (int)s[left] <= 122)) &&
         (((int)s[right] >= 65 && (int)s[right] <= 90) || ((int)s[right] >= 97 && (int)s[right] <= 122))){
             char temp = s[right];
             s[right] = s[left];
             s[left] = temp;
+            left++;
+            right--;
         }
-        left++;
-        right--;
+        
     }
 
 }
