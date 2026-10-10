@@ -10,7 +10,7 @@
  */
 #include "caesar.h"
 #include "strgPtr.h"
-#include <stdio.h>
+
 
 /* The end of message marker. It is never encrypted or decrypted. */
 #define EOM "__EOM__"
